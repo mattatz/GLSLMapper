@@ -8,17 +8,18 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using GLSLMapper.Attributes;
 using GLSLMapper.Renderer;
+using GLSLMapper.Misc;
 
 namespace GLSLMapper.Components
 {
-    public class GLSLTexture : GH_Component
+    public class ConstructGLSLPatternComponent : GH_Component
     {
         /// <summary>
         /// </summary>
-        public GLSLTexture()
-          : base("GLSLTexture", "GLSLTexture",
-            "Texture generator by GLSL",
-            "GLSLMapper", "GLSLTexture")
+        public ConstructGLSLPatternComponent()
+          : base("ConstructGLSLPattern", "ConstructGLSLPattern",
+            "Pattern generator by GLSL",
+            "GLSLMapper", "ConstructGLSLPattern")
         {
         }
 
@@ -32,6 +33,8 @@ namespace GLSLMapper.Components
         /// </summary>
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
+            pManager.AddTextParameter("glsl", "g", "glsl", GH_ParamAccess.item, "");
+            pManager.AddNumberParameter("resolution", "r", "resolution", GH_ParamAccess.item, 256);
         }
 
         /// <summary>
@@ -39,7 +42,7 @@ namespace GLSLMapper.Components
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("test", "O", "test", GH_ParamAccess.list);
+            pManager.AddGenericParameter("pattern", "P", "pattern", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -47,45 +50,22 @@ namespace GLSLMapper.Components
         /// </summary>
         /// <param name="DA">The DA object can be used to retrieve data from input parameters and 
         /// to store data in output parameters.</param>
-        protected override async void SolveInstance(IGH_DataAccess DA)
+        protected override void SolveInstance(IGH_DataAccess DA)
         {
-            /*
-            var t = new Task(() =>
+            string shader = null;
+            double resolution = 0;
+            if (
+                DA.GetData(0, ref shader) &&
+                DA.GetData(1, ref resolution)
+            )
             {
-                Rhino.RhinoApp.WriteLine("init renderer");
-                try
-                {
-                    // var renderer = new Renderer.Renderer(512, 512);
-                    // var buffer = renderer.GetBuffer();
-                    // Rhino.RhinoApp.WriteLine("buffer: " + buffer.pixels.Length);
-                } catch (Exception e)
-                {
-                    Rhino.RhinoApp.WriteLine(e.ToString());
-                }
-            });
-            t.Start(TaskScheduler.FromCurrentSynchronizationContext());
-            */
-
-            /*
-            var pixels = await Task.Run(() =>
-            {
-                // var api = GraphicsAPI.Default;
-                // api.Version = new APIVersion(4, 6);
-                var renderer = new Renderer.Renderer(512, 512);
+                var size = (int)Math.Min(Math.Max(32, resolution), 4098);
+                var renderer = shader.Length > 0 ? new Renderer.Renderer(size, size, shader, true) : new Renderer.Renderer(size, size, true);
+                renderer.Run();
                 var buffer = renderer.GetBuffer();
-                return buffer != null ? buffer.pixels : null;
-            });
-            */
-
-            var size = 256;
-            var renderer = new Renderer.Renderer(size, size, true);
-            renderer.Run();
-            var buffer = renderer.GetBuffer();
-            // Rhino.RhinoApp.WriteLine("buffer: " + buffer.ToString());
-
-            ((ImagePreview)m_attributes).UpdateImage(renderer.GetBitmap());
-
-            DA.SetDataList(0, buffer.pixels);
+                ((ImagePreview)m_attributes).UpdateImage(renderer.GetBitmap());
+                DA.SetData(0, new PatternMap(buffer));
+            }
         }
 
         protected override void AfterSolveInstance()

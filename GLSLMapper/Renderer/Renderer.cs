@@ -143,9 +143,9 @@ namespace GLSLMapper.Renderer
             // This draws the triangle.
             GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
 
-            pixels = new float[Width * Height * 4];
-            GL.ReadPixels(0, 0, Width, Height, OpenTK.Graphics.OpenGL4.PixelFormat.Rgba, PixelType.Float, pixels);
-            Console.WriteLine($"# of pixels: {pixels.Length}, {pixels[0]},{pixels[1]},{pixels[2]}");
+            pixels = new float[Width * Height * 1];
+            GL.ReadPixels(0, 0, Width, Height, OpenTK.Graphics.OpenGL4.PixelFormat.Red, PixelType.Float, pixels);
+            // Console.WriteLine($"# of pixels: {pixels.Length}, {pixels[0]},{pixels[1]},{pixels[2]}");
 
             bitmap = new Bitmap(Width, Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             BitmapData bmpData = bitmap.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.WriteOnly, bitmap.PixelFormat);

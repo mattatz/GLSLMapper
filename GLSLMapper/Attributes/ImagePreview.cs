@@ -31,6 +31,7 @@ namespace GLSLMapper.Attributes
             // base.Render(canvas, graphics, channel);
             if (channel == GH_CanvasChannel.Objects)
             {
+                GH_CapsuleRenderEngine.RenderInputGrip(graphics, canvas.Viewport.Zoom, InputGrip, true);
                 GH_CapsuleRenderEngine.RenderOutputGrip(graphics, canvas.Viewport.Zoom, OutputGrip, true);
 
                 var offset = 0;
