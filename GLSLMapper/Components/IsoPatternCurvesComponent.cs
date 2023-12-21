@@ -92,7 +92,7 @@ namespace GLSLMapper.Components
                 }));
 
                 double epsilon = 1e-12;
-                while (t < max)
+                while (t <= max)
                 {
                     var p = start + uv * t;
                     var pt0 = p - perp * 1e5;
@@ -119,12 +119,13 @@ namespace GLSLMapper.Components
                         tangent.Unitize();
                         for (int i = 0; i < n; i++)
                         {
-                            var coord = a + tangent * resolution;
+                            var coord = a + tangent * resolution * i;
                             var height = pattern.Sample(coord.X, coord.Y);
-                            input.Add(new Point3d(coord.X * scale.X, coord.Y * scale.Y, height * scale.X));
+                            input.Add(new Point3d(coord.X * scale.X, coord.Y * scale.Y, height * scale.Z));
                         }
                         var h = pattern.Sample(b.X, b.Y);
-                        input.Add(new Point3d(b.X * scale.X, b.Y * scale.Y, h * scale.X));
+                        input.Add(new Point3d(b.X * scale.X, b.Y * scale.Y, h * scale.Z));
+
                         var curve = new PolylineCurve(input);
                         isoCurves.Add(curve);
                     }

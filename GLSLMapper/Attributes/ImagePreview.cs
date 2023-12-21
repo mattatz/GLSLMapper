@@ -28,20 +28,15 @@ namespace GLSLMapper.Attributes
 
         protected override void Render(GH_Canvas canvas, Graphics graphics, GH_CanvasChannel channel)
         {
-            // base.Render(canvas, graphics, channel);
+            base.Render(canvas, graphics, channel);
+
             if (channel == GH_CanvasChannel.Objects)
             {
-                GH_CapsuleRenderEngine.RenderInputGrip(graphics, canvas.Viewport.Zoom, InputGrip, true);
-                GH_CapsuleRenderEngine.RenderOutputGrip(graphics, canvas.Viewport.Zoom, OutputGrip, true);
-
                 var offset = 0;
                 var box = Bounds;
                 graphics.DrawRectangle(pen, Rectangle.Round(box));
                 var r = new RectangleF(box.X + offset, box.Y + offset, box.Width - offset * 2, box.Height - offset * 2);
                 graphics.DrawImage(bitmap, r);
-            } else
-            {
-                base.Render(canvas, graphics, channel);
             }
         }
     }

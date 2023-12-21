@@ -21,7 +21,7 @@ namespace GLSLMapper.Misc
             x = Math.Max(0, Math.Min(x, buffer.width - 1));
             y = Math.Max(0, Math.Min(y, buffer.height - 1));
             var pix = buffer.pixels;
-            return pix[x * y];
+            return pix[x + y * buffer.width];
         }
 
         public double Sample(double u, double v)

@@ -33,7 +33,21 @@ namespace GLSLMapper.Components
         /// </summary>
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("glsl", "g", "glsl", GH_ParamAccess.item, "");
+            var shader = @"
+#version 330
+
+out vec4 outputColor;
+uniform vec2 uSize;
+
+void main(void)
+{
+    vec2 center = vec2(0.5, 0.5);
+    vec2 xy = gl_FragCoord.xy / uSize;
+    float d = distance(center, xy);
+    d = clamp(d, 0.0, 1.0);
+    outputColor = vec4(d, d, d, 1.0);
+}";
+            pManager.AddTextParameter("glsl", "g", "glsl", GH_ParamAccess.item, shader);
             pManager.AddNumberParameter("resolution", "r", "resolution", GH_ParamAccess.item, 256);
         }
 
