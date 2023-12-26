@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using GLSLMapper.Misc;
@@ -9,7 +10,7 @@ namespace GLSLMapper.Renderer
 {
     public class Renderer : GameWindow
     {
-        const string vertexShaderSource = @"
+        public readonly string vertexShaderSource = @"
             #version 330
 
             layout(location = 0) in vec4 position;
@@ -21,15 +22,15 @@ namespace GLSLMapper.Renderer
         ";
 
         // A simple fragment shader. Just a constant red color.
-        readonly string fragmentShaderSource = @"
+        public readonly string fragmentShaderSource = @"
             #version 330
 
             out vec4 outputColor;
-            uniform vec2 uSize;
+            uniform vec2 iResolution;
 
             void main(void)
             {
-                vec2 xy = gl_FragCoord.xy / uSize;
+                vec2 xy = gl_FragCoord.xy / iResolution;
                 outputColor = vec4(xy, 1.0, 1.0);
                 // outputColor = vec4(1.0, 0.0, 0.0, 1.0);
                 // outputColor = vec4(gl_FragCoord.xy, 0.0, 1.0);
@@ -55,6 +56,7 @@ namespace GLSLMapper.Renderer
         float[] pixels;
         Bitmap bitmap;
         bool once;
+        List<UniformBase> uniforms = new List<UniformBase>();
 
         public Renderer(int width, int height, bool once = false) : base(width, height)
         {
@@ -64,6 +66,16 @@ namespace GLSLMapper.Renderer
         public Renderer(int width, int height, string fragmentShaderSource, bool once = false) : this(width, height, once)
         {
             this.fragmentShaderSource = fragmentShaderSource;
+        }
+
+        public void RegisterUniform (UniformBase u)
+        {
+            uniforms.Add(u);
+        }
+
+        public void ClearUniform ()
+        {
+            uniforms.Clear();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -136,9 +148,14 @@ namespace GLSLMapper.Renderer
             // Use/Bind the program
             GL.UseProgram(shaderProgramHandle);
 
-            var uSizeLocation = GL.GetUniformLocation(shaderProgramHandle, "uSize");
+            var iResolutionLocation = GL.GetUniformLocation(shaderProgramHandle, "iResolution");
             // Console.WriteLine($"{Width}x{Height}");
-            GL.Uniform2(uSizeLocation, new Vector2(Width, Height));
+            GL.Uniform2(iResolutionLocation, new Vector2(Width, Height));
+
+            uniforms.ForEach((u) =>
+            {
+                u.Bind(shaderProgramHandle);
+            });
 
             // This draws the triangle.
             GL.DrawArrays(PrimitiveType.Triangles, 0, 6);
@@ -165,7 +182,7 @@ namespace GLSLMapper.Renderer
 
         public GLSLMapper.Misc.Buffer GetBuffer()
         {
-            return new GLSLMapper.Misc.Buffer(Width, Height, pixels);
+            return new GLSLMapper.Misc.Buffer(Width, Height, pixels, bitmap);
         }
 
         public Bitmap GetBitmap()
@@ -173,4 +190,5 @@ namespace GLSLMapper.Renderer
             return bitmap;
         }
     }
+
 }

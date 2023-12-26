@@ -8,7 +8,7 @@ namespace GLSLMapper.Misc
 {
     public class PatternMap
     {
-        private Buffer buffer;
+        public readonly Buffer buffer;
 
         public PatternMap(Buffer buffer) {
             this.buffer = buffer;

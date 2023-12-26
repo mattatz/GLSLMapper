@@ -14,12 +14,14 @@ namespace GLSLMapper.Misc
         public readonly int width;
         public readonly int height;
         public readonly float[] pixels;
+        public readonly Bitmap bitmap;
 
-        public Buffer(int width, int height, float[] pixels)
+        public Buffer(int width, int height, float[] pixels, Bitmap bitmap)
         {
             this.width = width;
             this.height = height;
             this.pixels = pixels;
+            this.bitmap = bitmap;
         }
 
         public override string ToString()
