@@ -2,6 +2,7 @@
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Attributes;
 using OpenTK.Graphics.OpenGL;
+using Rhino;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -32,7 +33,7 @@ namespace GLSLMapper.Attributes
             m_innerBounds = LayoutComponentBox(base.Owner);
 
             var size = 128;
-            var gripOffset = 40;
+            var gripOffset = 24;
             m_innerBounds.Size = new Size(size - gripOffset, size);
             LayoutInputParams(base.Owner, m_innerBounds);
             LayoutOutputParams(base.Owner, m_innerBounds);
